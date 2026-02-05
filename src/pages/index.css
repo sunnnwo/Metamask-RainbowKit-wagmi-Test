@@ -1,0 +1,15 @@
+/* 모든 요소의 기본 마진과 패딩 초기화 */
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* 화면 정중앙 정렬 (Flexbox 방식) */
+.center-container {
+  display: flex;
+  justify-content: center; /* 수평 정렬 */
+  align-items: center;     /* 수직 정렬 */
+  height: 100vh;           /* 화면 전체 높이 사용 (Viewport Height) */
+  background-color: #f0f0f0;
+}
