@@ -1,4 +1,5 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { http } from 'wagmi';
 import {
   arbitrum,
   base,
@@ -11,14 +12,19 @@ import {
 
 export const config = getDefaultConfig({
   appName: 'RainbowKit App',
-  projectId: 'YOUR_PROJECT_ID',
+  projectId: '00000000000000000000000000000000',
   chains: [
     mainnet,
     polygon,
     optimism,
     arbitrum,
     base,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
+    sepolia,
+    // ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
   ],
+  // transports: {
+  //   [mainnet.id]: http(),
+  //   [sepolia.id]: http('https://rpc.ankr.com/eth_sepolia'), // 세폴리아용 안정적인 RPC
+  // },
   ssr: true,
 });
