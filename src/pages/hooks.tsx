@@ -73,7 +73,7 @@ export function Hooks() {
 
     const {data: balance, refetch: balanceRefetch} = useBalance({
     address: account.address,
-    refetchInterval: 1000,
+    refetchInterval: 60000,
             })
     const handleApprove = () => {
         writeContract.writeContract({
