@@ -1,5 +1,5 @@
 import { useAccount, useBalance, useReadContract, useReadContracts, useWriteContract  } from 'wagmi'
-import { erc20Abi } from 'viem';
+import { erc20Abi, formatUnits, parseUnits } from 'viem';
 import { useChainId } from 'wagmi'
 import { useState, useEffect } from 'react';
 import { SocketAddress } from 'net';
@@ -14,7 +14,9 @@ export function Hooks() {
     const [isAuto, setIsAuto] = useState(false);
     const [Traddress, setTrAddress] = useState("");
     const [transferAmount, setTransferAmount] = useState("");
-    
+    const [sender, setSender] = useState("");
+    const [Recipient, setRecipient] = useState("");
+
     console.log("chainId: ", chainId);
     const TokenAddress: `0x${string}` = chainId === 1 //반드시 0x로 시작해야함
         ? "0xdAC17F958D2ee523a2206206994597C13D831ec7" 
@@ -56,6 +58,12 @@ export function Hooks() {
             args: [account.address as `0x${string}`,  spender as `0x${string}`],
             functionName: 'allowance',
         } as const,
+        {
+            ...wagmiReadContract,
+            abi: erc20Abi,
+            functionName: 'balanceOf',
+            args: [account.address as `0x${string}`],
+        }
     // "0x1f79BD178EcFbF880903E31C45206670704043AC"
         ],})
          
@@ -75,6 +83,8 @@ export function Hooks() {
     address: account.address,
     refetchInterval: 60000,
             })
+
+
     const handleApprove = () => {
         writeContract.writeContract({
             abi: erc20Abi,
@@ -94,18 +104,49 @@ export function Hooks() {
         })
     }
 
+    const handleTransferForm = () => {
+        // const amount = parseUnits(transferAmount, 6);
+        writeContract.writeContract({
+            abi: erc20Abi,
+            address: TokenAddress,
+            functionName: 'transferFrom',
+            args: [sender as `0x${string}`, Recipient as `0x${string}`, parseUnits(transferAmount, 6)], //보내는 주소, 받는 주소와 수량
+            chainId: 11155111
+        })
+    }
+
+    const handleMint = () => {
+        writeContract.writeContract({
+            abi: erc20Abi,
+            address: TokenAddress,
+            functionName: 'mint',
+            args: [account.address as `0x${string}`, parseUnits(transferAmount, 6)], //받는 주소와 수량
+            chainId: 11155111
+        })
+    }
+
+    const handleBurn = () => {
+        writeContract.writeContract({
+            abi: erc20Abi,
+            address: TokenAddress,
+            functionName: 'transfer',
+            args: ['0x0000000000000000000000000000000000000000' as `0x${string}`, parseUnits(transferAmount, 6)], //받는 주소와 수량
+            chainId: 11155111
+        })
+    }
   return <>
     <div>
         <ul>
-            <li>Balance:  {balance?.formatted} {balance?.symbol}</li>
+            <li>Balance:  {balance?.formatted ? formatUnits(balance.formatted, 6) : '0'} {balance?.symbol}</li>
             <li>ChainId : {chainId}</li>
-            <li>Total Supply:  {supply?.toString()}</li>
+            <li>Total Supply:  {supply?.toString() ? formatUnits(supply, 6) : '0'}</li>
             <button onClick={() => setIsAuto(!isAuto)}>{isAuto ? 'auto renew' : 'auto renew on'}</button>
 
       {/* 2. 수동 리프레시 버튼 */}
             <button onClick={() => supplyRefetch()} disabled={isAuto}> Renew</button>
             <li>Symbol:  {result.data?.[0]?.result?.toString()}</li>
             <li>Allowance:  {result.data?.[1]?.result?.toString()}</li>
+            <li>My Token Balance:  {result.data?.[2]?.result ? formatUnits(result.data[2].result, 6) : '0'}</li>
             <li><input type="text" placeholder='spender adderess' onChange={(e)=>setSpender(e.target.value)}/></li>
             <li><button onClick={handleApprove}>Approve</button></li>
 
@@ -113,6 +154,10 @@ export function Hooks() {
                 <input type="text" placeholder='Amount' onChange={(e)=>setTransferAmount(e.target.value)}/></li>
 
             <li><button onClick={handleTransToken}>Transfer</button></li>
+            <li><input type="text" placeholder='Sender Address' onChange={(e)=>setSender(e.target.value)}/>
+                <input type="text" placeholder='Recipient Address' onChange={(e)=>setRecipient(e.target.value)}/>
+                <input type="text" placeholder='Amount' onChange={(e)=>setTransferAmount(e.target.value)}/></li>
+            <li><button onClick={handleTransferForm}>TransferFrom</button></li>
         </ul>
     </div>
   </>
