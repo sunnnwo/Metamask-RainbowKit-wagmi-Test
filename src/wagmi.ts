@@ -4,9 +4,12 @@ import {
   arbitrum,
   base,
   mainnet,
+  opBNB,
+  opBNBTestnet,
   optimism,
   polygon,
   sepolia,
+  bscTestnet,
 } from 'wagmi/chains';
 
 
@@ -20,6 +23,8 @@ export const config = getDefaultConfig({
     arbitrum,
     base,
     sepolia,
+    opBNBTestnet,
+    bscTestnet
     // ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
   ],
   // transports: {
