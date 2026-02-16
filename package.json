@@ -19,6 +19,7 @@
     "wagmi": "^2.19.3"
   },
   "devDependencies": {
+    "@types/minimatch": "^5.1.2",
     "@types/node": "^22.19.1",
     "@types/react": "^19.1.8",
     "eslint": "^9.39.2",
