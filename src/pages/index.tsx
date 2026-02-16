@@ -4,7 +4,7 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import React from 'react';
 import { useAccount } from 'wagmi';
-import { Hooks } from './hooks';
+import { Hooks } from './hooks/hooks';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 

@@ -4,7 +4,7 @@ import { useChainId } from 'wagmi'
 import { useState, useEffect } from 'react';
 import { SocketAddress } from 'net';
 import { readContract } from 'viem/actions';
-import { myerc20Abi } from './myerc20abi';
+import { myerc20Abi } from '../constants/myerc20abi';
 import {Button} from 'react-bootstrap';
 import { Address } from 'viem';
 
