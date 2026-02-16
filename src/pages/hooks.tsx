@@ -6,6 +6,36 @@ import { SocketAddress } from 'net';
 import { readContract } from 'viem/actions';
 import { myerc20Abi } from './myerc20abi';
 import {Button} from 'react-bootstrap';
+import { Address } from 'viem';
+
+// const miniOwnerShipabi = [
+//     {
+//         type: 'function',
+//         name : 'transferOwnership',
+//         stateMutability: 'nonpayable',
+//         inputs: [
+//             {
+//                 type: 'address',
+//                 name: 'newOwner',
+//             },
+//         ],
+//     },
+//     {
+//         type: 'function',
+//         name : 'renounceOwnership',
+//         stateMutability: 'nonpayable',
+//         inputs: [
+//             {
+//                 // type: 'address',
+//                 // name: 'renounceOwner', //openZeppelin의 Ownable 컨트랙트에서는 renounceOwnership 함수는 인자를 받지 않음
+//             }
+//         ],
+//     }
+// ] as const;
+
+
+
+
 export function Hooks() {
     const account = useAccount();
     const chainId = useChainId();
@@ -132,6 +162,25 @@ export function Hooks() {
             
         })
     }
+    const handleTransferOwnership = () => {
+        writeContract.writeContract({
+            abi: myerc20Abi,
+            address: TokenAddress,
+            functionName: 'transferOwnership',
+            args: [Traddress as `0x${string}`], 
+            
+        })
+    }
+    const handleRenounceOwnership = () => {
+        console.log("Renounce Ownership function called");
+        writeContract.writeContract({
+            abi: myerc20Abi,
+            address: TokenAddress,
+            functionName: 'renounceOwnership',
+            // args: [Traddress as `0x${string}`], 
+            
+        })
+    }
 
   return <>
     <div>
@@ -156,8 +205,14 @@ export function Hooks() {
 
             <li><Button variant="primary" onClick={handleTransToken}>Transfer</Button></li>
             <li><Button variant="danger" onClick={handleBurnToken}>Burn</Button> <Button variant="success" onClick={handleMintToken}>Mint</Button></li>
+            
+            <li><input type="text" placeholder='New Owner Address' onChange={(e)=>setTrAddress(e.target.value)}/></li>
+            <li><Button variant="secondary" onClick={handleTransferOwnership}>Transfer Ownership</Button></li>
+            <li><Button variant="secondary" onClick={handleRenounceOwnership}>Renounce Ownership</Button></li>
         </ul>
     </div>
   </>
 }
+
+
 
