@@ -5,11 +5,13 @@ import { useState, useEffect } from 'react';
 import { SocketAddress } from 'net';
 import { readContract } from 'viem/actions';
 import { myerc20Abi } from './myerc20abi';
-
+import {Button} from 'react-bootstrap';
 export function Hooks() {
     const account = useAccount();
     const chainId = useChainId();
+    
     const writeContract = useWriteContract();
+
     const [spender, setSpender] = useState("");
     const [isAuto, setIsAuto] = useState(false);
     const [Traddress, setTrAddress] = useState("");
@@ -55,12 +57,6 @@ export function Hooks() {
 
 	const result = useReadContracts({
         contracts: [
-        // {
-        //     // abi: erc20Abi,
-        //     // address: TokenAddress,
-        //     ...wagmiReadContract,
-        //     functionName: 'totalSupply',
-        // },
         {
             ...wagmiReadContract,
             abi: erc20Abi,
@@ -117,15 +113,7 @@ export function Hooks() {
         })
     }
 
-    // const handleBurnToken = () => {
-    //     writeContract.writeContract({
-    //         abi: erc20Abi,
-    //         address: TokenAddress,
-    //         functionName: 'transfer',
-    //         args: ['0x000000000000000000000000000000000000dEaD' as `0x${string}`, aumountDecimals], 
-    //         chainId: 11155111
-    //     })
-    // }
+    // busd는 burn, mint 함수가 없어서 myerc20Abi로 바꿔야함
     const handleBurnToken = () => {
         writeContract.writeContract({
             abi: myerc20Abi,
@@ -154,20 +142,20 @@ export function Hooks() {
             <li>ChainId : {chainId}</li>
             <li>Total Supply:  {supply?.toString()}</li>
 			<li>My balance: {balance?.formatted} {balance?.symbol}</li>
-            <button onClick={() => setIsAuto(!isAuto)}>{isAuto ? 'auto renew' : 'auto renew on'}</button>
+            <Button variant="secondary" onClick={() => setIsAuto(!isAuto)}>{isAuto ? 'auto renew' : 'auto renew on'}</Button>
 
       {/* 2. 수동 리프레시 버튼 */}
-            <button onClick={() => supplyRefetch()} disabled={isAuto}> Renew</button>
+            <Button variant="secondary" onClick={() => supplyRefetch()} disabled={isAuto}> Renew</Button>
             <li>Symbol:  {result.data?.[0]?.result?.toString()}</li>
             <li>Allowance:  {result.data?.[1]?.result?.toString()}</li>
             <li><input type="text" placeholder='spender adderess' onChange={(e)=>setSpender(e.target.value)}/></li>
-            <li><button onClick={handleApprove}>Approve</button></li>
+            <li><Button variant="primary" onClick={handleApprove}>Approve</Button></li>
 
             <li><input type="text" placeholder='Address' onChange={(e)=>setTrAddress(e.target.value)}/> 
                 <input type="text" placeholder='Transfer or Burn or Mint Amount ' onChange={(e)=>setTransferAmount(e.target.value)}/></li>
 
-            <li><button onClick={handleTransToken}>Transfer</button></li>
-            <li><button onClick={handleBurnToken}>Burn</button> <button onClick={handleMintToken}>Mint</button></li>
+            <li><Button variant="primary" onClick={handleTransToken}>Transfer</Button></li>
+            <li><Button variant="danger" onClick={handleBurnToken}>Burn</Button> <Button variant="success" onClick={handleMintToken}>Mint</Button></li>
         </ul>
     </div>
   </>

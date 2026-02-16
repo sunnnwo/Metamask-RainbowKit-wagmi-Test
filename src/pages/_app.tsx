@@ -9,6 +9,8 @@ import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
 import { config } from '../wagmi';
 
+import Button from 'react-bootstrap/Button';
+
 const client = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {

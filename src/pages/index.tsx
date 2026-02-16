@@ -6,6 +6,8 @@ import React from 'react';
 import { useAccount } from 'wagmi';
 import { Hooks } from './hooks';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 const Home: NextPage = () => {
   return (
       <div className="center-container">
