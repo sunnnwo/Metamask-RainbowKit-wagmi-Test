@@ -1,5 +1,5 @@
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { http } from 'wagmi';
+import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { http } from "wagmi";
 import {
   arbitrum,
   base,
@@ -10,12 +10,11 @@ import {
   polygon,
   sepolia,
   bscTestnet,
-} from 'wagmi/chains';
-
+} from "wagmi/chains";
 
 export const config = getDefaultConfig({
-  appName: 'RainbowKit App',
-  projectId: '00000000000000000000000000000000',
+  appName: "RainbowKit App",
+  projectId: "70fef70381af10c245879cf98d2c5f5f",
   chains: [
     mainnet,
     polygon,
@@ -24,7 +23,7 @@ export const config = getDefaultConfig({
     base,
     sepolia,
     opBNBTestnet,
-    bscTestnet
+    bscTestnet,
     // ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
   ],
   // transports: {
