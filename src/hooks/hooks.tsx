@@ -155,6 +155,14 @@ export function Hooks() {
             
         })
     }
+
+	const {data: busdBalance} = useReadContract({
+		abi:myerc20Abi,
+		address: TokenAddress,
+		functionName: 'balanceOf',
+		args: [account.address as `0x${string}`],
+	})
+
     const handleMintToken = () => {
         writeContract.writeContract({
             abi: myerc20Abi,
@@ -193,6 +201,7 @@ export function Hooks() {
             <li>ChainId : {chainId}</li>
             <li>Total Supply:  {supply?.toString()}</li>
 			<li>My balance: {balance?.formatted} {balance?.symbol}</li>
+			<li>My Busd balance: {busdBalance?.toString()} BUSD</li>
             <Button variant="secondary" onClick={() => setIsAuto(!isAuto)}>{isAuto ? 'auto renew' : 'auto renew on'}</Button>
 
       {/* 2. 수동 리프레시 버튼 */}
@@ -215,6 +224,7 @@ export function Hooks() {
     </div>
   </>
 }
+
 
 
 
