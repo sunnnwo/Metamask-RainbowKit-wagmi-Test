@@ -1,5 +1,5 @@
 import { useAccount, useBalance, useReadContract, useReadContracts, useWriteContract  } from 'wagmi'
-import { erc20Abi, parseUnits } from 'viem';
+import { erc20Abi, formatUnits, parseUnits } from 'viem';
 import { useChainId } from 'wagmi'
 import { useState, useEffect } from 'react';
 import { SocketAddress } from 'net';
@@ -46,7 +46,8 @@ export function Hooks() {
     const [isAuto, setIsAuto] = useState(false);
     const [Traddress, setTrAddress] = useState("");
     const [transferAmount, setTransferAmount] = useState("");
-    
+    const [sender, setSender] = useState("");
+    const [Recipient, setRecipient] = useState("");
 
 	
 
@@ -59,7 +60,7 @@ export function Hooks() {
 
     const wagmiReadContract = {
         address : TokenAddress,
-        abi: erc20Abi,
+        abi: myerc20Abi,
     }
     const {data: supply, refetch: supplyRefetch} = useReadContract(
         {
@@ -78,7 +79,7 @@ export function Hooks() {
 		...wagmiReadContract,
 		functionName: 'decimals',
 		address: TokenAddress,
-		abi: erc20Abi,
+		abi: myerc20Abi,
 	});
 	console.log("decimals: ", decimals);
 	const aumountDecimals = parseUnits(transferAmount, Number(decimals));
@@ -89,23 +90,37 @@ export function Hooks() {
         contracts: [
         {
             ...wagmiReadContract,
-            abi: erc20Abi,
+            abi: myerc20Abi,
             functionName: 'symbol',
         } as const,
 		{
 			...wagmiReadContract,
-			abi: erc20Abi,
+			abi: myerc20Abi,
 			functionName: 'balanceOf',
 			args: [account.address as `0x${string}`],
 		} as const,
-        {
-            ...wagmiReadContract,
-            abi: erc20Abi,
-            args: [account.address as `0x${string}`,  spender as `0x${string}`],
-            functionName: 'allowance',
-        } as const,
+        // {
+        //     ...wagmiReadContract,
+        //     abi: erc20Abi,
+        //     args: [account.address as `0x${string}`,  spender as `0x${string}`],
+        //     functionName: 'allowance',
+        // } as const,
     // "0x1f79BD178EcFbF880903E31C45206670704043AC"
-        ],})
+		{
+            ...wagmiReadContract,
+            functionName: 'allowance',
+            // spender가 42자리 주소 형식을 갖췄을 때만 args를 전달
+            args: spender?.length === 42 
+                ? [account.address as `0x${string}`, spender as `0x${string}`] 
+                : ["0x0000000000000000000000000000000000000000", "0x0000000000000000000000000000000000000000"],
+        },
+    	],
+    query: {
+        // spender나 account가 바뀔 때마다 감시
+        enabled: !!account.address && spender?.length === 42,
+        refetchInterval: 3000, // 3초마다 갱신해서 변화를 즉각 확인
+    		}
+        ,})
          
     console.log("result: ", result);
 //    const IntervalBalance = ()=>{
@@ -154,7 +169,7 @@ export function Hooks() {
             args: [aumountDecimals], 
             
         })
-    }
+     }
 
 	const {data: busdBalance} = useReadContract({
 		abi:myerc20Abi,
@@ -162,7 +177,7 @@ export function Hooks() {
 		functionName: 'balanceOf',
 		args: [account.address as `0x${string}`],
 	})
-
+	const balanceBusd = busdBalance ? formatUnits(busdBalance as bigint, 18) : "0";
     const handleMintToken = () => {
         writeContract.writeContract({
             abi: myerc20Abi,
@@ -192,6 +207,17 @@ export function Hooks() {
         })
     }
 
+	const handleTransferForm = () => {
+        // const amount = parseUnits(transferAmount, 6);
+        writeContract.writeContract({
+            abi: erc20Abi,
+            address: TokenAddress,
+            functionName: 'transferFrom',
+            args: [sender as `0x${string}`, Recipient as `0x${string}`, parseUnits(transferAmount, 6)], //보내는 주소, 받는 주소와 수량
+            chainId: 11155111
+        })
+    }
+
   return <>
     <div>
 		<h3>Account1: 0x2C8cF493f47cC6BdB5a819bEE1aC15225EC7af9A</h3>
@@ -201,13 +227,13 @@ export function Hooks() {
             <li>ChainId : {chainId}</li>
             <li>Total Supply:  {supply?.toString()}</li>
 			<li>My balance: {balance?.formatted} {balance?.symbol}</li>
-			<li>My Busd balance: {busdBalance?.toString()} BUSD</li>
+			<li>My Busd balance: {balanceBusd} {result.data?.[0]?.result?.toString()}</li>
             <Button variant="secondary" onClick={() => setIsAuto(!isAuto)}>{isAuto ? 'auto renew' : 'auto renew on'}</Button>
 
       {/* 2. 수동 리프레시 버튼 */}
             <Button variant="secondary" onClick={() => supplyRefetch()} disabled={isAuto}> Renew</Button>
             <li>Symbol:  {result.data?.[0]?.result?.toString()}</li>
-            <li>Allowance:  {result.data?.[1]?.result?.toString()}</li>
+            <li>Allowance:  {result.data?.[2]?.result?.toString()}</li>
             <li><input type="text" placeholder='spender adderess' onChange={(e)=>setSpender(e.target.value)}/></li>
             <li><Button variant="primary" onClick={handleApprove}>Approve</Button></li>
 
@@ -220,6 +246,11 @@ export function Hooks() {
             <li><input type="text" placeholder='New Owner Address' onChange={(e)=>setTrAddress(e.target.value)}/></li>
             <li><Button variant="secondary" onClick={handleTransferOwnership}>Transfer Ownership</Button></li>
             <li><Button variant="secondary" onClick={handleRenounceOwnership}>Renounce Ownership</Button></li>
+			<li><input type="text" placeholder='Sender Address' onChange={(e)=>setSender(e.target.value)}/>
+                <input type="text" placeholder='Recipient Address' onChange={(e)=>setRecipient(e.target.value)}/>
+                <input type="text" placeholder='Amount' onChange={(e)=>setTransferAmount(e.target.value)}/></li>
+			<li><button onClick={handleTransferForm}>TransferFrom</button></li>
+
         </ul>
     </div>
   </>
