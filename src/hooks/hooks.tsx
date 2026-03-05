@@ -150,6 +150,15 @@ export function Hooks() {
             chainId: 11155111
         })
     }
+	const handleApprove_revoke = () => {
+        writeContract.writeContract({
+            abi: erc20Abi,
+            address: TokenAddress,
+            functionName: 'approve',
+            args: [spender as `0x${string}`, BigInt(0)],
+            chainId: 11155111
+        })
+    }
     const handleTransToken = () => {
         writeContract.writeContract({
             abi: erc20Abi,
@@ -236,6 +245,7 @@ export function Hooks() {
             <li>Allowance:  {result.data?.[2]?.result?.toString()}</li>
             <li><input type="text" placeholder='spender adderess' onChange={(e)=>setSpender(e.target.value)}/></li>
             <li><Button variant="primary" onClick={handleApprove}>Approve</Button></li>
+			<li><Button variant="danger" onClick={handleApprove_revoke}>Revoke_approve</Button></li>
 
             <li><input type="text" placeholder='Address' onChange={(e)=>setTrAddress(e.target.value)}/> 
                 <input type="text" placeholder='Transfer or Burn or Mint Amount ' onChange={(e)=>setTransferAmount(e.target.value)}/></li>
