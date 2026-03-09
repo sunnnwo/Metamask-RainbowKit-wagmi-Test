@@ -1,49 +1,15 @@
-// import '../styles/globals.css';
-// import '@rainbow-me/rainbowkit/styles.css';
-// import  '../styles/index.css';
-// import type { AppProps } from 'next/app';
+import "../styles/globals.css";
+import "@rainbow-me/rainbowkit/styles.css";
+import "../styles/index.css"; // index.css가 존재한다면 추가, 없으면 제거
+import type { AppProps } from "next/app";
+import { useState, useEffect } from "react"; // 추가
 
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-// import { WagmiProvider } from 'wagmi';
-// import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { WagmiProvider } from "wagmi";
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 
-// import { config } from '../wagmi';
-
-// import Button from 'react-bootstrap/Button';
-
-// const client = new QueryClient();
-
-// const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || '70fef70381af10c245879cf98d2c5f5f';
-
-
-// function MyApp({ Component, pageProps }: AppProps) {
-//   return (
-//     <WagmiProvider config={config}>
-//       <QueryClientProvider client={client}>
-//         <RainbowKitProvider>
-//           <Component {...pageProps} />
-          
-//         </RainbowKitProvider>
-//       </QueryClientProvider>
-//     </WagmiProvider>
-//   );
-// }
-
-// export default MyApp;
-
-
-import '../styles/globals.css';
-import '@rainbow-me/rainbowkit/styles.css';
-import '../styles/index.css';
-import type { AppProps } from 'next/app';
-import { useState, useEffect } from 'react'; // 추가
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { WagmiProvider } from 'wagmi';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
-
-import { config } from '../wagmi';
-import 'bootstrap/dist/css/bootstrap.min.css'; // 부트스트랩 CSS가 누락되었다면 추가
+import { config } from "../wagmi";
+import "bootstrap/dist/css/bootstrap.min.css"; // 부트스트랩 CSS가 누락되었다면 추가
 
 const client = new QueryClient();
 
